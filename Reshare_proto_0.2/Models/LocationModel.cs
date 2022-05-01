@@ -12,7 +12,10 @@ namespace Reshare_proto_0._2.Models
 
         public UserModel User { get; set; }
 
-        public int CountryId { get; set; }
-        public CountryModel Country { get; set; }
+        public int CoountryId { get; set; }
+
+        public int StateId { get; set; }
+
+        public int CityId { get; set; }
     }
 }

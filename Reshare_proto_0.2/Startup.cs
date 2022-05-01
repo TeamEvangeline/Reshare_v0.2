@@ -36,6 +36,7 @@ namespace Reshare_proto_0._2
 
             // Dependency Injection - Database Context
             services.AddDbContext<MainContext>(option => option.UseSqlServer(Configuration.GetConnectionString("Reshare_DEV")));
+            services.AddDbContext<GeoContext>(option => option.UseSqlServer(Configuration.GetConnectionString("Reshare_DEV")));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

@@ -19,47 +19,42 @@ namespace Reshare_proto_0._2.Migrations
                 .HasAnnotation("ProductVersion", "5.0.15")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Reshare_proto_0._2.Models.CityModel", b =>
+            modelBuilder.Entity("Reshare_proto_0._2.Models.CategoryModel", b =>
                 {
-                    b.Property<int>("CityId")
+                    b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("CityId")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CityName")
+                    b.Property<string>("CategoryName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("CityName");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StateId")
-                        .HasColumnType("int")
-                        .HasColumnName("StateId");
+                    b.HasKey("CategoryId");
 
-                    b.HasKey("CityId");
-
-                    b.ToTable("tblCity", "dim");
+                    b.ToTable("tblCategory");
                 });
 
-            modelBuilder.Entity("Reshare_proto_0._2.Models.CountryModel", b =>
+            modelBuilder.Entity("Reshare_proto_0._2.Models.ImageCategoryModel", b =>
                 {
-                    b.Property<int>("CountryId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("CountryId");
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CountryName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("CountryName");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("PhoneCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("PhoneCode");
+                    b.Property<int?>("ImageModelImgId")
+                        .HasColumnType("int");
 
-                    b.HasKey("CountryId");
+                    b.HasKey("Id");
 
-                    b.ToTable("tblCountry", "dim");
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ImageModelImgId");
+
+                    b.ToTable("tblImageCategories");
                 });
 
             modelBuilder.Entity("Reshare_proto_0._2.Models.ImageModel", b =>
@@ -95,33 +90,18 @@ namespace Reshare_proto_0._2.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CountryId")
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CoountryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StateId")
                         .HasColumnType("int");
 
                     b.HasKey("LocationId");
 
                     b.ToTable("tblLocation", "dim");
-                });
-
-            modelBuilder.Entity("Reshare_proto_0._2.Models.StateModel", b =>
-                {
-                    b.Property<int>("StateId")
-                        .HasColumnType("int")
-                        .HasColumnName("StateId");
-
-                    b.Property<string>("CountryId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("CountryId");
-
-                    b.Property<string>("StateName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("StateName");
-
-                    b.HasKey("StateId");
-
-                    b.ToTable("tblState", "dim");
                 });
 
             modelBuilder.Entity("Reshare_proto_0._2.Models.UserModel", b =>
@@ -172,23 +152,36 @@ namespace Reshare_proto_0._2.Migrations
                     b.ToTable("tblUser");
                 });
 
-            modelBuilder.Entity("Reshare_proto_0._2.Models.CountryModel", b =>
+            modelBuilder.Entity("Reshare_proto_0._2.Models.UserSaveModel", b =>
                 {
-                    b.HasOne("Reshare_proto_0._2.Models.LocationModel", "Location")
-                        .WithOne("Country")
-                        .HasForeignKey("Reshare_proto_0._2.Models.CountryModel", "CountryId")
+                    b.Property<int>("UserSaveId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("UserModelUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserSaveId");
+
+                    b.HasIndex("UserModelUserId");
+
+                    b.ToTable("tblUserSaves");
+                });
+
+            modelBuilder.Entity("Reshare_proto_0._2.Models.ImageCategoryModel", b =>
+                {
+                    b.HasOne("Reshare_proto_0._2.Models.CategoryModel", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Reshare_proto_0._2.Models.StateModel", "State")
-                        .WithOne("Country")
-                        .HasForeignKey("Reshare_proto_0._2.Models.CountryModel", "CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Reshare_proto_0._2.Models.ImageModel", null)
+                        .WithMany("ImageCategories")
+                        .HasForeignKey("ImageModelImgId");
 
-                    b.Navigation("Location");
-
-                    b.Navigation("State");
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Reshare_proto_0._2.Models.ImageModel", b =>
@@ -202,17 +195,6 @@ namespace Reshare_proto_0._2.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Reshare_proto_0._2.Models.StateModel", b =>
-                {
-                    b.HasOne("Reshare_proto_0._2.Models.CityModel", "City")
-                        .WithOne("State")
-                        .HasForeignKey("Reshare_proto_0._2.Models.StateModel", "StateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("City");
-                });
-
             modelBuilder.Entity("Reshare_proto_0._2.Models.UserModel", b =>
                 {
                     b.HasOne("Reshare_proto_0._2.Models.LocationModel", "Location")
@@ -222,26 +204,28 @@ namespace Reshare_proto_0._2.Migrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("Reshare_proto_0._2.Models.CityModel", b =>
+            modelBuilder.Entity("Reshare_proto_0._2.Models.UserSaveModel", b =>
                 {
-                    b.Navigation("State");
+                    b.HasOne("Reshare_proto_0._2.Models.UserModel", null)
+                        .WithMany("UserSaves")
+                        .HasForeignKey("UserModelUserId");
+                });
+
+            modelBuilder.Entity("Reshare_proto_0._2.Models.ImageModel", b =>
+                {
+                    b.Navigation("ImageCategories");
                 });
 
             modelBuilder.Entity("Reshare_proto_0._2.Models.LocationModel", b =>
                 {
-                    b.Navigation("Country");
-
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Reshare_proto_0._2.Models.StateModel", b =>
-                {
-                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("Reshare_proto_0._2.Models.UserModel", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("UserSaves");
                 });
 #pragma warning restore 612, 618
         }

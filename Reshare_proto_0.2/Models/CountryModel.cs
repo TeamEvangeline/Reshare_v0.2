@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Reshare_proto_0._2.Models
@@ -16,8 +17,6 @@ namespace Reshare_proto_0._2.Models
         [Required,Column("PhoneCode")]
         public string PhoneCode { get; set; }
 
-        public StateModel State { get; set; }
-
-        public LocationModel Location { get; set; }
+        public virtual ICollection<StateModel> States { get; set; }
     }
 }

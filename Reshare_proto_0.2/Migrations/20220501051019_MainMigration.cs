@@ -2,7 +2,7 @@
 
 namespace Reshare_proto_0._2.Migrations
 {
-    public partial class InitMigration : Migration
+    public partial class MainMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -10,18 +10,16 @@ namespace Reshare_proto_0._2.Migrations
                 name: "dim");
 
             migrationBuilder.CreateTable(
-                name: "tblCity",
-                schema: "dim",
+                name: "tblCategory",
                 columns: table => new
                 {
-                    CityId = table.Column<int>(type: "int", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StateId = table.Column<int>(type: "int", nullable: false)
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tblCity", x => x.CityId);
+                    table.PrimaryKey("PK_tblCategory", x => x.CategoryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -31,32 +29,13 @@ namespace Reshare_proto_0._2.Migrations
                 {
                     LocationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CountryId = table.Column<int>(type: "int", nullable: false)
+                    CoountryId = table.Column<int>(type: "int", nullable: false),
+                    StateId = table.Column<int>(type: "int", nullable: false),
+                    CityId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tblLocation", x => x.LocationId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tblState",
-                schema: "dim",
-                columns: table => new
-                {
-                    StateId = table.Column<int>(type: "int", nullable: false),
-                    StateName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CountryId = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tblState", x => x.StateId);
-                    table.ForeignKey(
-                        name: "FK_tblState_tblCity_StateId",
-                        column: x => x.StateId,
-                        principalSchema: "dim",
-                        principalTable: "tblCity",
-                        principalColumn: "CityId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -86,34 +65,6 @@ namespace Reshare_proto_0._2.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tblCountry",
-                schema: "dim",
-                columns: table => new
-                {
-                    CountryId = table.Column<int>(type: "int", nullable: false),
-                    CountryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tblCountry", x => x.CountryId);
-                    table.ForeignKey(
-                        name: "FK_tblCountry_tblLocation_CountryId",
-                        column: x => x.CountryId,
-                        principalSchema: "dim",
-                        principalTable: "tblLocation",
-                        principalColumn: "LocationId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_tblCountry_tblState_CountryId",
-                        column: x => x.CountryId,
-                        principalSchema: "dim",
-                        principalTable: "tblState",
-                        principalColumn: "StateId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "tblImages",
                 columns: table => new
                 {
@@ -134,6 +85,61 @@ namespace Reshare_proto_0._2.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "tblUserSaves",
+                columns: table => new
+                {
+                    UserSaveId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserModelUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblUserSaves", x => x.UserSaveId);
+                    table.ForeignKey(
+                        name: "FK_tblUserSaves_tblUser_UserModelUserId",
+                        column: x => x.UserModelUserId,
+                        principalTable: "tblUser",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblImageCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    ImageModelImgId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblImageCategories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tblImageCategories_tblCategory_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "tblCategory",
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tblImageCategories_tblImages_ImageModelImgId",
+                        column: x => x.ImageModelImgId,
+                        principalTable: "tblImages",
+                        principalColumn: "ImgId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblImageCategories_CategoryId",
+                table: "tblImageCategories",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblImageCategories_ImageModelImgId",
+                table: "tblImageCategories",
+                column: "ImageModelImgId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_tblImages_UserId",
                 table: "tblImages",
@@ -145,27 +151,29 @@ namespace Reshare_proto_0._2.Migrations
                 column: "LocationId",
                 unique: true,
                 filter: "[LocationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblUserSaves_UserModelUserId",
+                table: "tblUserSaves",
+                column: "UserModelUserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "tblCountry",
-                schema: "dim");
+                name: "tblImageCategories");
+
+            migrationBuilder.DropTable(
+                name: "tblUserSaves");
+
+            migrationBuilder.DropTable(
+                name: "tblCategory");
 
             migrationBuilder.DropTable(
                 name: "tblImages");
 
             migrationBuilder.DropTable(
-                name: "tblState",
-                schema: "dim");
-
-            migrationBuilder.DropTable(
                 name: "tblUser");
-
-            migrationBuilder.DropTable(
-                name: "tblCity",
-                schema: "dim");
 
             migrationBuilder.DropTable(
                 name: "tblLocation",
